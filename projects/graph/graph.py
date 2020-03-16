@@ -111,7 +111,7 @@ class Graph:
         # Create a queue
         q = Queue()
         # Enqueue a path to the starting vertex
-        q.enqueue([q])
+        q.enqueue([starting_vertex])
         # Create a set to store visited vertices
         visited = set()
         # While the queue is not empty...
@@ -133,6 +133,8 @@ class Graph:
                 for neighbor in self.get_neighbors(v):
                     # make a copy of the path
                     path_copy = path.copy()
+                    # Add neighbor to copy
+                    path_copy.append(neighbor)
                     # enqueue the copy
                     q.enqueue(path_copy)
 
