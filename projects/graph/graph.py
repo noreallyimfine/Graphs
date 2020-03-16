@@ -3,9 +3,11 @@ Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
 
-class Graph:
 
-    """Represent a graph as a dictionary of vertices mapping labels to edges."""
+class Graph:
+    """
+    Represent a graph as a dictionary of vertices mapping labels to edges.
+    """
     def __init__(self):
         self.vertices = {}
 
@@ -39,14 +41,24 @@ class Graph:
         beginning from starting_vertex.
         """
         # Create a queue
+        queue = Queue()
         # Enqueue the starting vertex
+        queue.enqueue(starting_vertex)
         # Create a set to store visited
+        visited = set()
         # While the queue is not empty
+        while queue.size() > 0:
             # Dequeue the first vertex
+            v = queue.dequeue()
             # Check if it's been visited
             # If it hasn't been visited
+            if v not in visited:
                 # Mark it as visited
+                print(v)
+                visited.add(v)
                 # Enqueue all it's neighbors
+                for neighbor in self.get_neighbors(v):
+                    queue.enqueue(neighbor)
 
     def dft(self, starting_vertex):
         """
@@ -54,23 +66,36 @@ class Graph:
         beginning from starting_vertex.
         """
         # Create a stack
-        # Enqueue the starting vertex
+        stack = Stack()
+        # Push the starting vertex
+        stack.push(starting_vertex)
         # Create a set to store visited
+        visited = set()
         # While the stack is not empty
+        while stack.size() > 0:
             # Pop the first vertex
+            v = stack.pop()
             # Check if it's been visited
             # If it hasn't been visited
+            if v not in visited:
                 # Mark it as visited
+                print(v)
+                visited.add(v)
                 # Push all it's neighbors onto the stack
+                for neighbor in self.get_neighbors(v):
+                    stack.push(neighbor)
 
-    def dft_recursive(self, starting_vertex):
+    def dft_recursive(self, starting_vertex, visited={}):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
 
         This should be done using recursion.
         """
-        pass  # TODO
+        # Create a stack
+        # Push the starting vertex
+        # While the stack is not empty
+            # Pop the first index
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -97,6 +122,7 @@ class Graph:
         This should be done using recursion.
         """
         pass  # TODO
+
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -150,18 +176,18 @@ if __name__ == '__main__':
         1, 2, 4, 6, 3, 5, 7
     '''
     graph.dft(1)
-    graph.dft_recursive(1)
+    #graph.dft_recursive(1)
 
     '''
     Valid BFS path:
         [1, 2, 4, 6]
     '''
-    print(graph.bfs(1, 6))
+    #print(graph.bfs(1, 6))
 
     '''
     Valid DFS paths:
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
-    print(graph.dfs(1, 6))
-    print(graph.dfs_recursive(1, 6))
+    #print(graph.dfs(1, 6))
+    #print(graph.dfs_recursive(1, 6))
