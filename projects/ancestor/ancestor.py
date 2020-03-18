@@ -31,13 +31,11 @@ def earliest_ancestor(ancestors, starting_node, counter=0):
         # Pop the first path
         path = stack.pop()
         # get parent from last pair
-        print(path)
         parent = path[-1]
         # Check if it's been visited
         # If it hasn't been visited
         if parent not in visited:
             # Mark it as visited
-            print(parent)
             visited.add(parent)
             # Push all it's neighbors onto the stack
             for grandparent in ancestors:
