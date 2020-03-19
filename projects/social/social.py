@@ -103,7 +103,8 @@ class SocialGraph:
             last_friend = path[-1]
 
             if last_friend not in visited.keys():
-                visited[last_friend] = path
+                if last_friend != user_id:
+                    visited[last_friend] = path
 
                 for friend_of_friend in self.get_friends(last_friend):
                     path_copy = path.copy()
