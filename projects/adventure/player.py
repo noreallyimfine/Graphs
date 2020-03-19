@@ -36,8 +36,14 @@ class Player:
                 # check every exit
                 for ex in last_room.get_exits():
                     print("exit", ex)
-                    # push exit to visited
-                    traversal_path.append(ex)
+                    # explore room
                     self.travel(ex)
+                    # check if that room has already been explored:
+                    # if not, add exit to the path
+                    print('Current Room after travelling:', self.current_room.id)
+                    if self.current_room.id not in visited:
+                        # add exit to path
+                        traversal_path.append(ex)
+                        # push current room to stack
                     s.push(self.current_room)  
         return traversal_path
