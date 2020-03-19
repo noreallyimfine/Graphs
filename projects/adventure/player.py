@@ -1,3 +1,6 @@
+from util import Stack
+
+
 class Player:
     def __init__(self, starting_room):
         self.current_room = starting_room
@@ -10,3 +13,31 @@ class Player:
                 next_room.print_room_description(self)
         else:
             print("You cannot move in that direction.")
+
+    def explore_world(self, traversal_path=[]):
+        ## Depth first traversal
+        s = Stack()
+        # Push starting room to stack
+        s.push(self.current_room)
+        print('Current Room:', self.current_room.id)
+        # intialize empty visited list
+        visited = set()
+        # while stack has stuff in it
+        while s.size() > 0:
+            # pop last element
+            last_room = s.pop()
+            print("Last room", last_room.id)
+            # check if visited
+            # if not
+            if last_room.id not in visited:
+                # add to visited
+                visited.add(last_room.id)
+                print("visited - ", visited)
+                # check every exit
+                for ex in last_room.get_exits():
+                    print("exit", ex)
+                    # push exit to visited
+                    traversal_path.append(ex)
+                    self.travel(ex)
+                    s.push(self.current_room)  
+        return traversal_path
