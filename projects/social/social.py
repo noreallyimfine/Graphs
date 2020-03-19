@@ -102,7 +102,7 @@ class SocialGraph:
 
             last_friend = path[-1]
 
-            if last_friend not in visited.keys():
+            if last_friend not in visited:
                 if last_friend != user_id:
                     visited[last_friend] = path
 
