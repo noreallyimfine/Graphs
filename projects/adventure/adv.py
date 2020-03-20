@@ -45,58 +45,77 @@ def new_entry(room, visited_rooms):
     for direction in room.get_exits():
         visited_rooms[room.id][direction] = "?"
 
-
-def bfs(player, visited_rooms, target="?"):
-    # Create a queue
+def bfs(player, visited_rooms):
+    room = player.current_room
     q = Queue()
-    # enqueue path to current room
-    q.enqueue([player.current_room])
-    # initialize empty set of visited rooms
-    traversal_path = []
+    q.enqueue([room.id])
     visited = set()
-    # while theres stuff in the queue
+    
     while q.size() > 0:
-        # dequeue first path
         path = q.dequeue()
-        # get last room on path
         last = path[-1]
-        print("last value", last.id)
-        print("current room", player.current_room.id)
-        # check if it's been visited
-        # if not...
-        if last.id not in visited:
-            # mark as visited
-            visited.add(last.id)
-            
-            # check if any of its directions have a "?"
-            if "?" in visited_rooms[last.id].values():
-                # loop through path by index
-                for i in range(len(path)):
-                    # loop through moves on current index
-                    for direction in visited_rooms[path[i].id]:
-                        # if moving in that direction gives us room at index+1
-                        if last.get_room_in_direction(direction) == path[i+1]:
-                            # append that direction to traversal path
-                            traversal_path.append(direction)
-                    # if so, return the path
-                    return traversal_path
-            # otherwise
-            # get all exits from last room:
-            for direction in visited_rooms[last.id]:
+        if last not in visited:
+            visited.add(last)
+            for direction in visited_rooms[last]:
+                if visited_rooms[last][direction] == "?":
+                    return path
+                elif visited_rooms[last][direction] not in visited:
+                    path_copy = path.copy()
+                    path_copy.append(visited_rooms[last][direction])
+                    q.enqueue(path_copy)
+    return path
 
-                ##############################
-                next_room = last.get_room_in_direction(direction)
-                #next_room = visited_rooms[last.id][direction]
-                ##############################
+# def bfs(player, visited_rooms, target="?"):
+#     # Create a queue
+#     q = Queue()
+#     # enqueue path to current room
+#     q.enqueue([player.current_room])
+#     # initialize empty set of visited rooms
+#     traversal_path = []
+#     visited = set()
+#     # while theres stuff in the queue
+#     while q.size() > 0:
+#         # dequeue first path
+#         path = q.dequeue()
+#         # get last room on path
+#         last = path[-1]
+#         print("last value", last.id)
+#         print("current room", player.current_room.id)
+#         # check if it's been visited
+#         # if not...
+#         if last.id not in visited:
+#             # mark as visited
+#             visited.add(last.id)
+            
+#             # check if any of its directions have a "?"
+#             if "?" in visited_rooms[last.id].values():
+#                 # loop through path by index
+#                 for i in range(len(path)):
+#                     # loop through moves on current index
+#                     for direction in visited_rooms[path[i].id]:
+#                         # if moving in that direction gives us room at index+1
+#                         if last.get_room_in_direction(direction) == path[i+1]:
+#                             # append that direction to traversal path
+#                             traversal_path.append(direction)
+#                     # if so, return the path
+#                     return traversal_path
+#             # otherwise
+#             # get all exits from last room:
+#             for direction in visited_rooms[last.id]:
+
+#                 ##############################
+#                 next_room = last.get_room_in_direction(direction)
+#                 #next_room = visited_rooms[last.id][direction]
+#                 ##############################
                 
                 
-                # copy path
-                path_copy = path.copy()
-                # append room in exit direction
-                path_copy.append(next_room)
-                # queue it up 
-                q.enqueue(path_copy)
-    return None
+#                 # copy path
+#                 path_copy = path.copy()
+#                 # append room in exit direction
+#                 path_copy.append(next_room)
+#                 # queue it up 
+#                 q.enqueue(path_copy)
+#     return None
 
 
 def explore_world(player, room_graph):
