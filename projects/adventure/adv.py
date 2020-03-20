@@ -6,16 +6,17 @@ from util import Stack, Queue
 import random
 from ast import literal_eval
 
+#random.seed(175456)
 # Load world
 world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-# map_file = "maps/test_line.txt"
-# map_file = "maps/test_cross.txt"
-# map_file = "maps/test_loop.txt"
+#map_file = "maps/test_line.txt"
+map_file = "maps/test_cross.txt"
+#map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-map_file = "maps/main_maze.txt"
+#map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph = literal_eval(open(map_file, "r").read())
@@ -49,8 +50,9 @@ def bfs(player, visited_rooms, target="?"):
     # Create a queue
     q = Queue()
     # enqueue path to current room
-    q.enqueue([player.current_room.id])
+    q.enqueue([player.current_room])
     # initialize empty set of visited rooms
+    traversal_path = []
     visited = set()
     # while theres stuff in the queue
     while q.size() > 0:
@@ -58,23 +60,40 @@ def bfs(player, visited_rooms, target="?"):
         path = q.dequeue()
         # get last room on path
         last = path[-1]
+        print("last value", last.id)
+        print("current room", player.current_room.id)
         # check if it's been visited
         # if not...
-        if last not in visited:
+        if last.id not in visited:
             # mark as visited
-            visited.add(last)
+            visited.add(last.id)
+            
             # check if any of its directions have a "?"
-            if "?" in visited_rooms[last].values:
-                # if so, return the path
-                return path
+            if "?" in visited_rooms[last.id].values():
+                # loop through path by index
+                for i in range(len(path)):
+                    # loop through moves on current index
+                    for direction in visited_rooms[path[i].id]:
+                        # if moving in that direction gives us room at index+1
+                        if last.get_room_in_direction(direction) == path[i+1]:
+                            # append that direction to traversal path
+                            traversal_path.append(direction)
+                    # if so, return the path
+                    return traversal_path
             # otherwise
             # get all exits from last room:
-            for direction in visited_rooms[last]:
-                next_room = visited_rooms[last][direction]
+            for direction in visited_rooms[last.id]:
+
+                ##############################
+                next_room = last.get_room_in_direction(direction)
+                #next_room = visited_rooms[last.id][direction]
+                ##############################
+                
+                
                 # copy path
                 path_copy = path.copy()
                 # append room in exit direction
-                path_copy.append()
+                path_copy.append(next_room)
                 # queue it up 
                 q.enqueue(path_copy)
     return None
@@ -92,38 +111,59 @@ def explore_world(player, room_graph):
     # add room to stack
     s.push(player.current_room)
     # while the stack not empty
-    while len(visited_rooms) < len(room_graph):
+    while s.size() > 0:
         # pop off room
         room = s.pop()
         # add room to visited dict
         if room.id not in visited_rooms:
             new_entry(room, visited_rooms)
+
         # pick a direction that has a ?
-        exits = 0
-        unexplored_moves = [dir for dir in visited_rooms[player.current_room.id] if [visited_rooms[player.current_room.id][dir] == "?"]]
-        move = random.choice(unexplored_moves)
-        # find the room in that direction and add as value in dict
-        pretend_room = room.get_room_in_direction(move)
-        visited_rooms[room.id][move] = pretend_room
-        if pretend_room not in visited_rooms:
-            new_entry(pretend_room, visited_rooms)
-        # add reverse direction to room we are going to
-        reverse_dir = reverse(move)
-        visited_rooms[pretend_room.id][reverse_dir] = player.current_room.id
-        # add direction to path
-        player.travel(move)
-        traversal_path.append(move)
-        # add room to stack
-        s.push(pretend_room)
-        exits += 1
+
+        unexplored_moves = []
+        for direction in visited_rooms[player.current_room.id]:
+            if visited_rooms[player.current_room.id][direction] == "?":
+                unexplored_moves.append(direction)
+
+        ##########
+
+        print("Unexplored moves", unexplored_moves)
+        if len(unexplored_moves) > 0:
+            move = random.choice(unexplored_moves)
+            # find the room in that direction and add as value in dict
+            pretend_room = room.get_room_in_direction(move)
+            visited_rooms[room.id][move] = pretend_room.id
+            if pretend_room not in visited_rooms:
+                new_entry(pretend_room, visited_rooms)
+            # add reverse direction to room we are going to
+            reverse_dir = reverse(move)
+            visited_rooms[pretend_room.id][reverse_dir] = player.current_room.id
+            print("Pretend room reverse value: ", visited_rooms[pretend_room.id][reverse_dir])
+            print("Pretend room values: ", visited_rooms[pretend_room.id]) 
+            # add direction to path
+            print("Traversal path", traversal_path)
+            print("Current room: ", player.current_room.id)
+            print("Next move: ", move)
+            print("Moving to room:", pretend_room.id)
+            player.travel(move)
+            traversal_path.append(move)
+            # add room to stack
+            s.push(pretend_room)
+        
         # if you run out of ?s
-        if exits == 0:
+        else:
             # implement bfs to find way back to recent ?
             retrace = bfs(player, visited_rooms)
             # append that path to this path
             if retrace is None:
                 return traversal_path
+            
+            # ###################################
+            # for walk_back in retrace:
+            #     player.travel(walk_back)
+            #     traversal_path.append(move)
             traversal_path.append(retrace)
+            ###################################
     return traversal_path
 
 
