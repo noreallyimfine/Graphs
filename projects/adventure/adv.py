@@ -54,33 +54,24 @@ def bfs(player, visited, target="?"):
         # start a path beginning with that exit
         q.enqueue([ex])
     # visited set for tracking where we've been
-    combos_tried = set()
+    rooms_seen = set()
     # track the room were looking at
-    original = player.current_room
+    current = player.current_room.id
     # while theres stuff in the queue
     while q.size() > 0:
+        
         # dequeue the first path
         print("Queue: ", q.queue)
         path = q.dequeue()
-        player.current_room = original
-        current = player.current_room.id
         print("Path", path)
         next_move = path[-1]
-        for move in path[:-1]:
-            player.travel(move)
-
-        current = player.current_room.id
         print("Next move: ", next_move)
-        move_combo = (current, next_move)
-        print("Move combo", move_combo)
         print("Current", current)
         # check if we already visited the room, exit combo
         # if not...
-        print(combos_tried)
-        if move_combo not in combos_tried:
-            print("Adding move combo", move_combo)
+        if current not in rooms_seen:
             # mark as visited
-            combos_tried.add(move_combo)
+            rooms_seen.add(current)
             # check if that leads to a "?"
             if visited[current][next_move] == "?":
                 # return the path
@@ -95,42 +86,10 @@ def bfs(player, visited, target="?"):
                 path_copy.append(direction)
                 # queue path copy
                 q.enqueue(path_copy)
+            current = visited[current][next_move]
 
 
-
-    # # Initialize a queue
-    # q = Queue()
-    # # For every exit from room
-    # for exit in player.current_room.get_exits():
-    #     # enqueue path to exit
-    #     q.enqueue([exit])
-    # # use dict lookup to search neighbors for "?"
-    # visited = set()
-    # # while theres stuff in the queue
-    # current = player.current_room.id
-    # while q.size() > 0:
-    #     #print("Queue: ", q.queue)
-    #     print("Room being inspected for unexplored exits:", current)
-    #     path = q.dequeue()
-    #     #print("Current:", current)
-    #     print("Path", path)
-        
-    #     direction = path[-1]
-    #     print("next move:", direction)
-    #     print("Visited dict at the current room going in last direction of path:", visited[current][direction])
-    #     next_room = visited[current][direction]
-    #     print("next room: ", next_room)
-    #     for nexit in visited[next_room]:
-    #         if visited[next_room][nexit] == target:
-    #             return path
-    #         print("Nexit: ", nexit)
-    #         path_copy = path.copy()
-    #         path_copy.append(nexit)
-    #         print("path copy", path_copy)
-    #         q.enqueue(path_copy)
-    #     current = visited[current][direction]
-               
-
+   
 
 
 def explore_world(player):
@@ -149,11 +108,12 @@ def explore_world(player):
     # while the stack is not empty
     while s.size() > 0:
         # Pop off tuple
+        print(s.stack)
         next_exit = s.pop()
         last = next_exit[0]
         direction = next_exit[1]
         # Travel in that direction
-        print("Path to travel from start: ", path)
+        print("Path traveled from start: ", path)
         print("Current Room #", player.current_room.id)
         print("next exploration tuple", next_exit)
         player.travel(direction)
@@ -192,35 +152,9 @@ def explore_world(player):
     return path
 
 
-    # if not visited:
-    #     visited = {}
-    #     #new_entry(player, visited)
-    # if not rooms_visited:
-    #     rooms_visited = set()
-    # print("Current Room", player.current_room.id)
-    # print("Visited: ", visited)
-    # print("Rooms Visited: ", rooms_visited)
-    # for dir in player.current_room.get_exits():
-    #     current = player.current_room.id
-    #     if player.current_room.id not in visited:
-    #         new_entry(player, visited)
-    #         rooms_visited.add(player.current_room.id)
-    #     if visited[player.current_room.id][dir] == "?":    
-    #         player.travel(dir)
-    #         print("Direction Travelled:", dir)
-    #         visited[current][dir] = player.current_room.id
-    #         reverse = reverse_direction(dir)
-    #         visited[player.current_room.id][reverse] = current
-    #         explore_world(player, visited=visited, rooms_visited=rooms_visited)
-    # return rooms_visited
-# Add current room to top of a stack
-# Store room and exits in dict with "?" 
-# while stack not empty
-# Check out all the exits 
-# Check if the room is in dict already
-# If not, add room
-# Either way, change both "?" directions
-
+# DFT
+    # make a stack
+    # 
 
 
 
