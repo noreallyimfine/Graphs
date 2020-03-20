@@ -47,35 +47,88 @@ def new_entry(player, visited_dict):
 
 
 def bfs(player, visited, target="?"):
-    # Initialize a queue
+    # Start with a queue\
     q = Queue()
-    # For every exit from room
-    for exit in player.current_room.get_exits():
-        # enqueue path to exit
-        q.enqueue([exit])
-    # use dict lookup to search neighbors for "?"
+    # for every exit in the room
+    for ex in player.current_room.get_exits():
+        # start a path beginning with that exit
+        q.enqueue([ex])
+    # visited set for tracking where we've been
+    combos_tried = set()
+    # track the room were looking at
+    original = player.current_room
     # while theres stuff in the queue
-    original = player.current_room.id
     while q.size() > 0:
-        #print("Queue: ", q.queue)
-        current = original
+        # dequeue the first path
+        print("Queue: ", q.queue)
         path = q.dequeue()
-        #print("Current:", current)
-        #print("Path", path)
-        for direction in path[-1]:
-            player.travel(direction)
+        player.current_room = original
         current = player.current_room.id
-        #print("Current after travel:", current)
-        direction = path[-1]
-        #print("next move:", direction)
-        #print("Visited dict at the current room going in last direction of path:", visited[current][direction])
-        if visited[current][direction] == target:
-            return path
-        for nexit in visited[current]:
-            #print("Nexit: ", nexit)
-            path_copy = path.copy()
-            path_copy.append(nexit)
-            q.enqueue(path_copy)
+        print("Path", path)
+        next_move = path[-1]
+        for move in path[:-1]:
+            player.travel(move)
+
+        current = player.current_room.id
+        print("Next move: ", next_move)
+        move_combo = (current, next_move)
+        print("Move combo", move_combo)
+        print("Current", current)
+        # check if we already visited the room, exit combo
+        # if not...
+        print(combos_tried)
+        if move_combo not in combos_tried:
+            print("Adding move combo", move_combo)
+            # mark as visited
+            combos_tried.add(move_combo)
+            # check if that leads to a "?"
+            if visited[current][next_move] == "?":
+                # return the path
+                return path
+            next_room = visited[current][next_move]
+            print("next room ", next_room)
+            # get all exits for the room it leads to
+            for direction in visited[next_room]:
+                # copy the path
+                path_copy = path.copy()
+                # add exit
+                path_copy.append(direction)
+                # queue path copy
+                q.enqueue(path_copy)
+
+
+
+    # # Initialize a queue
+    # q = Queue()
+    # # For every exit from room
+    # for exit in player.current_room.get_exits():
+    #     # enqueue path to exit
+    #     q.enqueue([exit])
+    # # use dict lookup to search neighbors for "?"
+    # visited = set()
+    # # while theres stuff in the queue
+    # current = player.current_room.id
+    # while q.size() > 0:
+    #     #print("Queue: ", q.queue)
+    #     print("Room being inspected for unexplored exits:", current)
+    #     path = q.dequeue()
+    #     #print("Current:", current)
+    #     print("Path", path)
+        
+    #     direction = path[-1]
+    #     print("next move:", direction)
+    #     print("Visited dict at the current room going in last direction of path:", visited[current][direction])
+    #     next_room = visited[current][direction]
+    #     print("next room: ", next_room)
+    #     for nexit in visited[next_room]:
+    #         if visited[next_room][nexit] == target:
+    #             return path
+    #         print("Nexit: ", nexit)
+    #         path_copy = path.copy()
+    #         path_copy.append(nexit)
+    #         print("path copy", path_copy)
+    #         q.enqueue(path_copy)
+    #     current = visited[current][direction]
                
 
 
@@ -100,7 +153,7 @@ def explore_world(player):
         last = next_exit[0]
         direction = next_exit[1]
         # Travel in that direction
-        print("Path traveled: ", path)
+        print("Path to travel from start: ", path)
         print("Current Room #", player.current_room.id)
         print("next exploration tuple", next_exit)
         player.travel(direction)
@@ -130,11 +183,12 @@ def explore_world(player):
             # insert breadth first searrch to find last "?"
             print("Start retrace at before bfs call: ", player.current_room.id)
             retrace = bfs(player, visited)
-            print("Start retrace at after bfs call: ", player.current_room.id)
             print("Retrace steps from bfs", retrace)
             for move in retrace:
-                print("Room as we retrace", player.current_room.id)
+                player.travel(move)
                 path.append(move)
+            print("Room after retracing", player.current_room.id)
+            print("Path with retrace", path)
     return path
 
 
