@@ -87,5 +87,3 @@ class World:
             str += "#\n"
         print(str)
         print("#####")
-
-
