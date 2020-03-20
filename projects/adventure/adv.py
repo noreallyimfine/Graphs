@@ -127,75 +127,9 @@ def explore_world(player, room_graph):
     return traversal_path
 
 
-# def bfs(player, visited, target="?"):
-#     # Start with a queue
-#     # push path of exits to queue
-#     # empty visited
-
-
-# def explore_world(player):
-#     # Initialize a stack
-#     s = Stack()
-#     # initialize visited dict
-#     visited = {}
-#     # path traveled
-#     path = []
-#     # Add first room to dict
-#     new_entry(player, visited)
-#     # for each exit in the first room
-#     for direction in player.current_room.get_exits():
-#         # push (room id, direction) to stack
-#         s.push((player.current_room.id, direction))
-#     # while the stack is not empty
-#     while s.size() > 0:
-#         # Pop off tuple
-#         print(s.stack)
-#         next_exit = s.pop()
-#         last = next_exit[0]
-#         direction = next_exit[1]
-#         # Travel in that direction
-#         print("Path traveled from start: ", path)
-#         print("Current Room #", player.current_room.id)
-#         print("next exploration tuple", next_exit)
-#         player.travel(direction)
-#         path.append(direction)
-#         print("Current room after travel:", player.current_room.id)
-#         print(visited)
-#         # Check if the room is in the dict
-#         # if not...
-#         if player.current_room.id not in visited:
-#             #  Add entry for room
-#             new_entry(player, visited)
-#         # Change value for both rooms and dirs
-#         # Set value of last room at direction traveled to current room
-#         visited[last][direction] = player.current_room.id
-#         # Set the value of current room at reverse direction to last room
-#         reverse = reverse_direction(direction)
-#         visited[player.current_room.id][reverse] = last
-#         # Check exits of this room
-#         counter = 0
-#         for nexit in player.current_room.get_exits():
-#             # Check if the value in the dict is "?"
-#             # iF so, add to stack
-#             if visited[player.current_room.id][nexit] == "?":
-#                 s.push((player.current_room.id, nexit))
-#                 counter += 1
-#         if counter == 0:
-#             # insert breadth first searrch to find last "?"
-#             print("Start retrace at before bfs call: ", player.current_room.id)
-#             retrace = bfs(player, visited)
-#             print("Retrace steps from bfs", retrace)
-#             for move in retrace:
-#                 player.travel(move)
-#                 path.append(move)
-#             print("Room after retracing", player.current_room.id)
-#             print("Path with retrace", path)
-#     return path
-
-
 traversal_path = explore_world(player, room_graph)
 
-print(explore_world(player, room_graph))
+# print(explore_world(player, room_graph))
 # TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
